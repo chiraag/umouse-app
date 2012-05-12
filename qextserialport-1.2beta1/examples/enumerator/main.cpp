@@ -1,12 +1,15 @@
-#include "daedalus.h"
-#include <QDebug>
+/**
+ * @file main.cpp
+ * @brief Main file.
+ * @author Micha? Policht
+ */
+
 #include "qextserialenumerator.h"
-
-daedalus::daedalus(QWidget *parent)
-    : QMainWindow(parent)
+#include <QtCore/QList>
+#include <QtCore/QDebug>
+//! [0]
+int main()
 {
-    ui.setupUi(this);
-
     QList<QextPortInfo> ports = QextSerialEnumerator::getPorts();
     qDebug() << "List of ports:";
     for (int i = 0; i < ports.size(); i++) {
@@ -18,21 +21,6 @@ daedalus::daedalus(QWidget *parent)
         qDebug() << "product ID:" << QString::number(ports.at(i).productID, 16);
         qDebug() << "===================================";
     }
+    return 0;
 }
-
-daedalus::~daedalus()
-{
-
-}
-
-void daedalus::on_modeCBox_currentIndexChanged(const QString & choice)
-{
-	if(choice == "Live Mode"){
-		ui.liveGBox->setEnabled(true);
-		ui.simGBox->setEnabled(false);
-	}else if (choice == "Simulation"){
-		ui.liveGBox->setEnabled(false);
-		ui.simGBox->setEnabled(true);
-	}
-}
-
+//! [0]

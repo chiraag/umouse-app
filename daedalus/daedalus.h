@@ -14,6 +14,10 @@ public:
 
 private:
     Ui::daedalusClass ui;
+
+private slots:
+   void on_modeCBox_currentIndexChanged(const QString &);
+
 };
 
 #endif // DAEDALUS_H
