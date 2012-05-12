@@ -3,6 +3,9 @@
 
 #include <QtGui/QMainWindow>
 #include "ui_daedalus.h"
+#include "qextserialport.h"
+#include "qextserialenumerator.h"
+
 
 class daedalus : public QMainWindow
 {
@@ -13,10 +16,18 @@ public:
     ~daedalus();
 
 private:
+    void refreshPorts();
+
+private:
     Ui::daedalusClass ui;
+    QextSerialPort *serport;
+    QList<QextPortInfo> portsList;
+    QByteArray bytesReceived;
 
 private slots:
-   void on_modeCBox_currentIndexChanged(const QString &);
+	void serportReadyRead();
+	void on_modeCBox_currentIndexChanged(const QString &);
+	void on_connectButton_clicked();
 
 };
 
