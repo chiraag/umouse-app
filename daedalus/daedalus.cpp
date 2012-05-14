@@ -1,5 +1,6 @@
 #include "daedalus.h"
 #include <QDebug>
+#include <QTimer>
 
 daedalus::daedalus(QWidget *parent)
     : QMainWindow(parent)
@@ -76,20 +77,42 @@ void daedalus::on_connectButton_clicked()
 		if(serport->open(QIODevice::ReadWrite))
 		{
 			connect(serport, SIGNAL(readyRead()), this, SLOT(serportReadyRead()));
-			qDebug() << "Listening for data on" << serport->portName();
-			ui.connectButton->setText("Disconnect Device");
+//			qDebug() << "Listening for data on" << serport->portName();
+
+			QTimer::singleShot(500, &serWaitLoop, SLOT(quit()));
+			bserialTimeout = true;
+			serport->write("Ping\n");
+			serWaitLoop.exec();
+
+			if(!bserialTimeout){ //serport opens :)
+				ui.connectButton->setText("Disconnect Device");
+				ui.conStatusLabel->setText("Device on "+serport->portName()+" supports uTalk Protocol");
+				ui.baudCBox->setEnabled(false);
+				ui.portCBox->setEnabled(false);
+
+			}
+			else
+			{
+				disconnect(serport, SIGNAL(readyRead()), this, SLOT(serportReadyRead()));
+				serport->close();
+				ui.conStatusLabel->setText("Device on "+serport->portName()+" does not support uTalk Protocol");
+			}
+
 		}
 		else
 		{
 			disconnect(serport, SIGNAL(readyRead()), this, SLOT(serportReadyRead()));
-			qDebug() << "Device failed to open:" << serport->errorString();
+			serport->close();
+			ui.conStatusLabel->setText("Error while opening port "+serport->portName());
 		}
 	}
 	else
 	{
 		serport->close();
-		qDebug() << "Closed port " << serport->portName();
+		ui.conStatusLabel->setText("Closed Device on "+serport->portName());
 		ui.connectButton->setText("Connect to Device");
+		ui.baudCBox->setEnabled(true);
+		ui.portCBox->setEnabled(true);
 	}
 
 }
@@ -109,8 +132,11 @@ void daedalus::serportReadyRead()
     // with only 3 or 4 bytes at a time
     if(bytes.contains('\n'))
     {
-        qDebug() << QString::fromAscii(bytesReceived);
+		bytesReceived.remove(bytesReceived.indexOf('\n',0),1);
+//        qDebug() << QString::fromAscii(bytesReceived);
+        if(bytesReceived == "Ping" ){
+			bserialTimeout = false;
+        }
         bytesReceived.clear();
     }
 }
-
