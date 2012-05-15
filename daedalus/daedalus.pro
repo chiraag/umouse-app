@@ -2,9 +2,9 @@ TEMPLATE = app
 TARGET = daedalus
 QT += core \
     gui
-HEADERS +=  \ #maze.h \
+HEADERS +=  maze.h \
     daedalus.h
-SOURCES += \ #maze.cpp \
+SOURCES += maze.cpp \
     main.cpp \
     daedalus.cpp
 FORMS += daedalus.ui

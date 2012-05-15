@@ -1,4 +1,5 @@
 #include "daedalus.h"
+#include "maze.h"
 #include <QDebug>
 #include <QTimer>
 
@@ -8,11 +9,23 @@ daedalus::daedalus(QWidget *parent)
     ui.setupUi(this);
     serport = new QextSerialPort(QextSerialPort::EventDriven);
     refreshPorts();
+
+    mazeScene = new QGraphicsScene;
+    mazeScene->setSceneRect(-200, -200, 400, 400);
+    mazeScene->setItemIndexMethod(QGraphicsScene::NoIndex);
+    maze *mazeItem = new maze;
+    mazeItem->setPos(0,0);
+    mazeScene->addItem(mazeItem);
+
+    ui.mazeView->setScene(mazeScene);
+    ui.mazeView->setRenderHints( QPainter::Antialiasing );
+    ui.mazeView->show();
 }
 
 daedalus::~daedalus()
 {
 	delete serport;
+	delete mazeScene;
 }
 
 void daedalus::refreshPorts()

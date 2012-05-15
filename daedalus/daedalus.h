@@ -27,6 +27,9 @@ private:
     QByteArray bytesReceived;
 	bool bserialTimeout;
 
+    QGraphicsScene *mazeScene;
+
+
 private slots:
 	void on_modeCBox_currentIndexChanged(const QString &);
 	void on_connectButton_clicked();
